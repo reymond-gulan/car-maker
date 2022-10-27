@@ -5412,11 +5412,11 @@ __webpack_require__.r(__webpack_exports__);
     },
     selectData: function selectData(manufacturerId, manufacturer, type, color) {
       this.manufacturer_id = manufacturerId;
-      var css = "";
-      css += 'Manufacturer: <b>' + manufacturer + '</b> <br />';
-      css += 'Type: <b>' + type + '</b> <br />';
-      css += 'Color: <span class="p-1 px-4 w-25" style="background:' + color + '"></span>';
-      $('#manufacturer-info').html(css);
+      var html = "";
+      html += 'Manufacturer: <b>' + manufacturer + '</b> <br />';
+      html += 'Type: <b>' + type + '</b> <br />';
+      html += 'Color: <span class="p-1 px-4 w-25" style="background:' + color + '"></span>';
+      $('#manufacturer-info').html(html);
     },
     createNew: function createNew() {
       var data = {
