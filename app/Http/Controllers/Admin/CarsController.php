@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ManufacturersController extends Controller
+class CarsController extends Controller
 {
     /**
-     * Manufacturers' Page
+     * Cars' Page
      *
      * @return Illuminate\View\View
      */
     public function index()
     {
-        return view('admin.manufacturers.index');
+        return view('admin.car-types.index');
     }
 }

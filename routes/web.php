@@ -28,4 +28,7 @@ Route::group(['middleware' => 'auth:web'], function () {
         Route::get('/', [Admin\ManufacturersController::class, 'index'])->name('manufacturers');
     });
 
+    Route::group(['prefix' => 'cars'], function () {
+        Route::get('/', [Admin\CarsController::class, 'index'])->name('cars');
+    });
 });

@@ -4,6 +4,19 @@
 label{
     font-weight:bold !important;
 }
+.manufacturers-container{
+    display:none;
+    height:80vh;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    padding:10px 30px !important;
+}
+.uppercase, .manufacturers-container{
+    text-transform:uppercase !important;
+}
+.manufacturers-container .contents{
+    cursor:pointer;
+}
 
 @media only screen and (max-width: 768px) {
     table{

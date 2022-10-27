@@ -13,6 +13,8 @@
     <!-- Styles -->
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <body>
     <div id="app">
@@ -48,11 +50,14 @@
                             @endif
                         @else
                             <li class="nav-item">
+                                <a class="nav-link" href="/cars">Car Setup</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="/manufacturers">Manufacturers</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                                    {{ ucwords(Auth::user()->name) }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
