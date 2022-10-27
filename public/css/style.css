@@ -1,0 +1,16 @@
+.contents-container{
+    width:100%;
+}
+label{
+    font-weight:bold !important;
+}
+
+@media only screen and (max-width: 768px) {
+    table{
+        width:1000px !important;
+    }
+    .contents-container{
+        overflow-y: scroll;
+        overflow-x:hidden;
+    }
+  }

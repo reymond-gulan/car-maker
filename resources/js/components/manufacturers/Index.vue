@@ -1,0 +1,203 @@
+<template>
+    <div class="container">
+        <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                <i class="fa fa-plus"></i> NEW
+            </button>
+        </p>
+        <div class="collapse mb-5" id="collapseExample">
+            <div class="row justify-content-center">
+                <div class="col-sm-6 border rounded p-2 bg-white">
+                    <div class="form-group row my-3">
+                        <h5>
+                            <b><i class="fa fa-plus"></i> ADD NEW</b>
+                        </h5>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="manufacturer" v-model="manufacturer" placeholder="Manufacturer" autocomplete="off">
+                        <label for="floatingInput">Manufacturer</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="type" v-model="type" placeholder="Type" autocomplete="off">
+                        <label for="floatingPassword">Type</label>
+                    </div>
+                    <div class="form-group row">
+                        <label for="color" class="col-sm-2 col-form-label">Color</label>
+                        <div class="col-sm-10">
+                        <input type="color" class="form-control" id="color" v-model="color">
+                        </div>
+                    </div>
+                    <div class="form-group" v-if="isValid()">
+                        <button class="btn btn-primary" @click="createNew()">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="contents-container">
+        <table class="table w-100 bg-white table-sm table-condensed table-responsive table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Manufacturer</th>
+                    <th>Type</th>
+                    <th>Color</th>
+                    <th>
+                        <center>
+                        <i class="fa fa-cog"></i>
+                        </center>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody style="text-transform:uppercase;">
+                <tr v-for="(data, index) in manufacturers" v-bind:index="index">
+                    <td v-text="data.manufacturer"></td>
+                    <td v-text="data.type"></td>
+                    <td class="col-sm-1">
+                        <center>
+                            <input type="color" class="form-control p-0" v-model="data.color" disabled />
+                        </center>
+                    </td>
+                    <td class="col-sm-1">
+                        <center>
+                        <button class="btn btn-danger p-0 px-3" @click="deleteRow(data.manufacturer_id, index)">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        </center>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</template>
+
+<script>
+    import Swal from 'sweetalert2';
+
+    export default {
+        data () {
+            return {
+                manufacturer:null,
+                type:null,
+                color:null,
+                manufacturers: {}
+            }
+        },
+
+        mounted () {
+            this.getManufacturers()
+        },
+
+        methods: {
+
+            /**
+             * Fetch all rows
+             *
+             * @return void
+             */
+
+            getManufacturers () {
+                this.manufacturers = {};
+                axios.get('/api/manufacturers')
+                    .then((response) => {
+                        this.manufacturers = response.data;
+                    }).catch((error) => {
+                        console.debug(`Error while fetching manufacturers ${JSON.stringify(error)}`)
+                    })
+            },
+            
+            /**
+             * Validate inputs before submission
+             *
+             * @return void
+             */
+
+            isValid () {
+                return (! _.isEmpty(this.manufacturer) && ! _.isEmpty(this.type) && ! _.isEmpty(this.color));
+            },
+
+            /**
+             * Submit data
+             *
+             * @return void
+             */
+
+            createNew () {
+                let data = {
+                    manufacturer:this.manufacturer,
+                    type:this.type,
+                    color:this.color,
+                };
+
+                axios.post('/api/manufacturers/save', data)
+                    .then((response) => {
+
+                        if(response.data['success']) {
+                            Swal.fire('SUCCESS',response.data['success'],'success');
+                            this.clearFields();
+                            this.getManufacturers();
+                        } else if(response.data['errors']) {
+                            var message = "";
+                            for(var i = 0; i < response.data['errors'].length; i++)
+                            {
+                                message += '<li>'+ response.data['errors'][i]+'</li>';
+                            }
+
+                            Swal.fire('ERROR',message,'error');
+                        } else {
+                            Swal.fire('ERROR',response.data['error'],'error');
+                        }
+                        
+                    }).catch((error) => {
+                        console.log(error);
+                        Swal.fire(
+                            'Oops...',
+                            error,
+                            'error'
+                        );
+                        console.debug(`Error while creating new record - ${JSON.stringify(error)}`);
+                })
+            },
+
+            /**
+             * Delete record from database
+             *
+             * @param manufacturerId
+             *
+             * @returns {void}
+             */
+             deleteRow (manufacturerId, index) {
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Once deleted, it cannot be undone. Proceed anyway?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, proceed.'
+                }).then((result) => {
+                    if (result.value) {
+                        axios.delete(`/api/manufacturers/${manufacturerId}`)
+                            .then((response) => {
+
+                                if(response.data['success']) {
+                                    Swal.fire('SUCCESS',response.data['success'],'success');
+                                    this.manufacturers.splice(index,1);
+                                } else {
+                                    Swal.fire('ERROR',response.data['error'],'error');
+                                }
+
+                            })
+                    }
+                });
+            },
+
+            clearFields() {
+                this.manufacturer = null;
+                this.type = null;
+                this.color=null;
+            }
+        }
+    }
+</script>
