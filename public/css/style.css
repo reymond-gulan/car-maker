@@ -5,11 +5,17 @@ label{
     font-weight:bold !important;
 }
 .manufacturers-container{
-    display:none;
-    height:80vh;
+    position:fixed !important;
+    display: none;
+    height:100vh;
+    right:0;
+    top:0;
+    bottom:0;
     overflow-y:scroll;
     overflow-x:hidden;
-    padding:10px 30px !important;
+    padding:10px 30px 120px 30px !important;
+    z-index:4;
+    background:#ccc;
 }
 .uppercase, .manufacturers-container{
     text-transform:uppercase !important;
@@ -31,11 +37,70 @@ label{
 
 ::-webkit-scrollbar-thumb {
     background: #ccc;
-    border-radius:10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
     background: #aaa;
+}
+
+.shadow {
+    box-shadow:5px 0 0 25px #333;
+}
+
+.rounded-corner {
+    border-radius: 15px !important;
+}
+
+.border-top {
+    border-top:2px solid #aaa !important;
+}
+
+.btn {
+    border-radius:0 !important;
+    border:0 !important;
+}
+
+.btn-add {
+    border-radius:50% !important;
+    padding:15px 20px;
+    position:fixed;
+    bottom:0;
+    right:0;
+    margin:0 50px 50px 0;
+    z-index:5;
+}
+.color {
+    padding:25px;
+    transform:rotate(-30deg);
+    width:100px;
+    margin-right:-250px !important;
+    margin-bottom:-20px !important;
+    z-index:-1 !important; 
+    border-radius:50px 0 50px 0;
+}
+nav{
+    padding:0 !important;
+    background:#ccc;
+    position:fixed !important;
+    right:0;
+    left:0;
+    z-index:3;
+}
+main{
+    padding-top:100px !important;
+}
+
+nav .container{
+    padding:20px 0 !important;
+    font-weight:bold;
+    background-color:none !important;
+}
+.nav-link{
+    color: #000 !important;
+    text-shadow:2px 0 #FFF;
+}
+.pointer{
+    cursor:pointer;
 }
 
 @media only screen and (max-width: 768px) {
@@ -43,6 +108,7 @@ label{
         width:1000px !important;
     }
     .contents-container{
+        width: auto;
         overflow-y: scroll;
         overflow-x:hidden;
     }

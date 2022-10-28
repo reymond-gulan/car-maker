@@ -1,15 +1,15 @@
 <template>
     <div class="row justify-content-center">
-        <div class="col-sm-8">
+        <div class="col-sm-6 px-5">
             <p>
-                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                    <i class="fa fa-plus"></i> NEW
+                <button class="btn btn-primary btn-add shadow" type="button" data-toggle="collapse" data-target="#new" aria-expanded="false" aria-controls="new">
+                    <i class="fa fa-plus"></i>
                 </button>
             </p>
-            <div class="collapse mb-5" id="collapseExample">
+            <div class="collapse mb-5" id="new">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <div class="container border rounded p-2 bg-white">
+                    <div class="col-sm-12 p-0">
+                        <div class="container rounded-corner p-4 bg-white shadow border-top">
                             <div class="form-group row my-3">
                                 <h5>
                                     <b><i class="fa fa-plus"></i> ADD NEW</b>
@@ -29,36 +29,16 @@
                                 <label for="floatingInput">Car Name</label>
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-primary" @click="createNew()">Create</button>
+                                <button class="btn btn-primary submit" @click="createNew()">Create</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-           <div class="col-sm-12">
-                <div class="row">
-                    <div class="col-md-4 p-1 uppercase" v-for="(data, index) in cars" v-bind:index="index">
-                        <div class="col-sm-12 content border rounded bg-white p-2 text-right">
-                            <center>
-                                <h3>
-                                    <b>{{data.car_name}}</b>
-                                </h3>
-                                <hr class="m-0">
-                                <p class="m-0">{{data.manufacturers.manufacturer}}</p>
-                                <p class="m-0">{{data.manufacturers.type}}</p>
-                                <p class="m-0 p-3 border rounded" :style="{background:data.manufacturers.color}"></p>
-                            </center>
-                                <button class="btn btn-danger p-0 px-4 pull-right mt-2" @click="deleteRow(data.car_id, index)">
-                                    <small><i class="fa fa-trash"></i></small>
-                                </button>
-                        </div>
-                    </div>
-                </div>
-           </div>
         </div>
-        <div class="col-sm-3 manufacturers-container border rounded w3-animate-right">
+        <div class="col-sm-3 manufacturers-container w3-animate-right">
             <div class="row">
-                <div class="col-sm-12 bg-white border rounded p-2 mb-1 pb-0" v-for="(data, index) in manufacturers" v-bind:index="index">
+                <div class="col-sm-12 bg-white shadow rounded-corner p-2 mb-1 pb-0" v-for="(data, index) in manufacturers" v-bind:index="index">
                     <div class="contents" @click="selectData(data.manufacturer_id, data.manufacturer, data.type, data.color)">
                         <center>
                                 <h6 class="my-0">Manufacturer: <b>{{data.manufacturer}}</b></h6>
@@ -67,6 +47,27 @@
                                 Color
                                 <p class="p-3 rounded" :style="{background:data.color}"></p>
                         </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 px-5">
+            <div class="row">
+                <div class="col-md-3 p-1 uppercase" v-for="(data, index) in cars" v-bind:index="index">
+                    <div class="col-sm-12 content rounded-corner shadow bg-white p-2 text-right mb-3 pb-3 px-3">
+                        <center>
+                            <p class="m-0 color shadow border border-dark" :style="{background:data.manufacturers.color}"></p>
+                            <h3>
+                                <b>{{data.car_name}}</b>
+                            </h3>
+                            <hr class="m-0">
+                            <small>
+                                <p class="m-0">{{data.manufacturers.manufacturer}}</p>
+                                <p class="m-0">{{data.manufacturers.type}}</p>
+                            </small>
+                        </center>
+                            
+                            <i @click="deleteRow(data.car_id, index)" class="fa fa-trash border rounded border-danger pointer text-danger p-2 px-3"></i>
                     </div>
                 </div>
             </div>
@@ -96,6 +97,12 @@
                     container.removeClass('w3-hide').addClass("w3-show");
                 } else {
                     container.removeClass('w3-show').addClass("w3-hide");
+                }
+            });
+            $('#new').on('hidden.bs.collapse', function(){
+                var container = $(this);
+                if(container.is(':hidden')){
+                    $('.manufacturers-container').addClass('w3-hide').removeClass('w3-show');
                 }
             });
         },
@@ -140,15 +147,14 @@
                     car_name:this.car_name
                 };
 
-                this.clearFields();
-
                 axios.post('/api/cars/save', data)
                     .then((response) => {
-                        console.log(response);
+
                         if(response.data['success']) {
                             Swal.fire('SUCCESS',response.data['success'],'success');
                             this.clearFields();
                             this.getCars();
+                            $('.btn-add').trigger('click');
                         } else if(response.data['errors']) {
                             var message = "";
                             for(var i = 0; i < response.data['errors'].length; i++)
@@ -162,7 +168,7 @@
                         }
                         
                     }).catch((error) => {
-                        console.log(error);
+
                         Swal.fire(
                             'Oops...',
                             'Invalid / Unauthorized request. Please reload and try again',

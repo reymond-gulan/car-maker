@@ -1,13 +1,13 @@
 <template>
     <div class="container">
         <p>
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                <i class="fa fa-plus"></i> NEW
+            <button class="btn btn-primary btn-add shadow" type="button" data-toggle="collapse" data-target="#new" aria-expanded="false" aria-controls="new">
+                <i class="fa fa-plus"></i>
             </button>
         </p>
-        <div class="collapse mb-5" id="collapseExample">
+        <div class="collapse mb-5 form-container" id="new">
             <div class="row justify-content-center">
-                <div class="col-sm-6 border rounded p-2 bg-white">
+                <div class="col-sm-6 rounded border-top rounded-corner p-4 shadow p-2 bg-white">
                     <div class="form-group row my-3">
                         <h5>
                             <b><i class="fa fa-plus"></i> ADD NEW</b>
@@ -27,14 +27,14 @@
                         <input type="color" class="form-control" id="color" v-model="color">
                         </div>
                     </div>
-                    <div class="form-group" v-if="isValid()">
-                        <button class="btn btn-primary" @click="createNew()">Create</button>
+                    <div class="form-group">
+                        <button class="btn btn-primary submit" @click="createNew()">Create</button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="contents-container">
-        <table class="table w-100 bg-white table-sm table-condensed table-responsive table-bordered table-striped table-hover">
+        <table class="shadow table w-100 bg-white table-sm table-bordered table-striped table-hover">
             <thead>
                 <tr>
                     <th>Manufacturer</th>
@@ -79,7 +79,7 @@
             return {
                 manufacturer:null,
                 type:null,
-                color:null,
+                color:'#000000',
                 manufacturers: {}
             }
         },
@@ -104,16 +104,6 @@
                     }).catch((error) => {
                         console.debug(`Error while fetching manufacturers ${JSON.stringify(error)}`)
                     })
-            },
-            
-            /**
-             * Validate inputs before submission
-             *
-             * @return void
-             */
-
-            isValid () {
-                return (! _.isEmpty(this.manufacturer) && ! _.isEmpty(this.type) && ! _.isEmpty(this.color));
             },
 
             /**
