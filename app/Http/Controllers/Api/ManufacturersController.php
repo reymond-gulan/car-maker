@@ -32,7 +32,10 @@ class ManufacturersController extends Controller
         $rules = array(
             'manufacturer' => ['required'],
             'type' => ['required'],
-            'color' => ['required'],
+            'color' => [
+                    'required',
+                    'regex:/^#[a-zA-Z0-9]{6}$/i'
+                        ],
         );
 
         $error  = Validator::make($request->all(),$rules);
