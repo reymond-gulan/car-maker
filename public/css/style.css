@@ -87,7 +87,7 @@ nav{
     z-index:3;
 }
 main{
-    padding-top:100px !important;
+    padding:100px 0 100px 0 !important;
 }
 
 nav .container{
@@ -99,17 +99,25 @@ nav .container{
     color: #000 !important;
     text-shadow:2px 0 #FFF;
 }
+.nav-item:hover {
+    border-radius:10px;
+    background:#FFF;
+}
+
 .pointer{
     cursor:pointer;
 }
 
 @media only screen and (max-width: 768px) {
-    table{
-        width:1000px !important;
+    .table{
+        width:100vh !important;
     }
     .contents-container{
         width: auto;
-        overflow-y: scroll;
-        overflow-x:hidden;
+        overflow-y: hidden;
+        overflow-x:scroll;
+    }
+    .nav-link{
+        text-align:center;
     }
   }
