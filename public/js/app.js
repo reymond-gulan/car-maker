@@ -5374,6 +5374,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -5381,11 +5397,13 @@ __webpack_require__.r(__webpack_exports__);
     return {
       manufacturer_id: null,
       car_name: null,
-      manufacturers: {}
+      manufacturers: {},
+      cars: {}
     };
   },
   mounted: function mounted() {
     this.getManufacturers();
+    this.getCars();
     $(document).on('click', '.form, .manufacturers-container .col-sm-12', function () {
       var container = $('.manufacturers-container');
       if (container.is(':hidden')) {
@@ -5410,6 +5428,15 @@ __webpack_require__.r(__webpack_exports__);
         console.debug("Error while fetching manufacturers ".concat(JSON.stringify(error)));
       });
     },
+    getCars: function getCars() {
+      var _this2 = this;
+      this.cars = {};
+      axios.get('/api/cars').then(function (response) {
+        _this2.cars = response.data;
+      })["catch"](function (error) {
+        console.debug("Error while fetching manufacturers ".concat(JSON.stringify(error)));
+      });
+    },
     selectData: function selectData(manufacturerId, manufacturer, type, color) {
       this.manufacturer_id = manufacturerId;
       var html = "";
@@ -5419,10 +5446,67 @@ __webpack_require__.r(__webpack_exports__);
       $('#manufacturer-info').html(html);
     },
     createNew: function createNew() {
+      var _this3 = this;
       var data = {
         manufacturer_id: this.manufacturer_id,
         car_name: this.car_name
       };
+      this.clearFields();
+      axios.post('/api/cars/save', data).then(function (response) {
+        console.log(response);
+        if (response.data['success']) {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('SUCCESS', response.data['success'], 'success');
+          _this3.clearFields();
+          _this3.getCars();
+        } else if (response.data['errors']) {
+          var message = "";
+          for (var i = 0; i < response.data['errors'].length; i++) {
+            message += '<li>' + response.data['errors'][i] + '</li>';
+          }
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', message, 'error');
+        } else {
+          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', response.data['error'], 'error');
+        }
+      })["catch"](function (error) {
+        console.log(error);
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('Oops...', 'Invalid / Unauthorized request. Please reload and try again', 'error');
+        console.debug("Error while creating new record - ".concat(JSON.stringify(error)));
+      });
+    },
+    /**
+     * Delete car record from database
+     *
+     * @param carId
+     *
+     * @returns {void}
+     */
+    deleteRow: function deleteRow(carId, index) {
+      var _this4 = this;
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+        title: 'Are you sure?',
+        text: "Once deleted, it cannot be undone. Proceed anyway?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, proceed.'
+      }).then(function (result) {
+        if (result.value) {
+          axios["delete"]("/api/cars/".concat(carId)).then(function (response) {
+            if (response.data['success']) {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('SUCCESS', response.data['success'], 'success');
+              _this4.cars.splice(index, 1);
+            } else {
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', response.data['error'], 'error');
+            }
+          });
+        }
+      });
+    },
+    clearFields: function clearFields() {
+      this.manufacturer_id = null;
+      this.car_name = null;
+      $('#manufacturer-info').html('Select manufacturer record first.');
     }
   }
 });
@@ -32472,6 +32556,32 @@ var render = function () {
                 [
                   _vm._m(1),
                   _vm._v(" "),
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.manufacturer_id,
+                        expression: "manufacturer_id",
+                      },
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      type: "hidden",
+                      id: "manufacturer_id",
+                      readonly: "",
+                    },
+                    domProps: { value: _vm.manufacturer_id },
+                    on: {
+                      input: function ($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.manufacturer_id = $event.target.value
+                      },
+                    },
+                  }),
+                  _vm._v(" "),
                   _vm._m(2),
                   _vm._v(" "),
                   _c("div", { staticClass: "form-floating mb-3" }, [
@@ -32507,28 +32617,6 @@ var render = function () {
                     ]),
                   ]),
                   _vm._v(" "),
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.manufacturer_id,
-                        expression: "manufacturer_id",
-                      },
-                    ],
-                    staticClass: "form-control",
-                    attrs: { type: "text", id: "manufacturer_id" },
-                    domProps: { value: _vm.manufacturer_id },
-                    on: {
-                      input: function ($event) {
-                        if ($event.target.composing) {
-                          return
-                        }
-                        _vm.manufacturer_id = $event.target.value
-                      },
-                    },
-                  }),
-                  _vm._v(" "),
                   _c("div", { staticClass: "form-group" }, [
                     _c(
                       "button",
@@ -32550,7 +32638,65 @@ var render = function () {
         ]
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "col-sm-12 border rounded bg-white" }),
+      _c("div", { staticClass: "col-sm-12" }, [
+        _c(
+          "div",
+          { staticClass: "row" },
+          _vm._l(_vm.cars, function (data, index) {
+            return _c(
+              "div",
+              {
+                staticClass: "col-md-4 p-1 uppercase",
+                attrs: { index: index },
+              },
+              [
+                _c(
+                  "div",
+                  {
+                    staticClass:
+                      "col-sm-12 content border rounded bg-white p-2 text-right",
+                  },
+                  [
+                    _c("center", [
+                      _c("h3", [_c("b", [_vm._v(_vm._s(data.car_name))])]),
+                      _vm._v(" "),
+                      _c("hr", { staticClass: "m-0" }),
+                      _vm._v(" "),
+                      _c("p", { staticClass: "m-0" }, [
+                        _vm._v(_vm._s(data.manufacturers.manufacturer)),
+                      ]),
+                      _vm._v(" "),
+                      _c("p", { staticClass: "m-0" }, [
+                        _vm._v(_vm._s(data.manufacturers.type)),
+                      ]),
+                      _vm._v(" "),
+                      _c("p", {
+                        staticClass: "m-0 p-3 border rounded",
+                        style: { background: data.manufacturers.color },
+                      }),
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger p-0 px-4 pull-right mt-2",
+                        on: {
+                          click: function ($event) {
+                            return _vm.deleteRow(data.car_id, index)
+                          },
+                        },
+                      },
+                      [_vm._m(3, true)]
+                    ),
+                  ],
+                  1
+                ),
+              ]
+            )
+          }),
+          0
+        ),
+      ]),
     ]),
     _vm._v(" "),
     _c(
@@ -32682,6 +32828,12 @@ var staticRenderFns = [
         ]
       ),
     ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("small", [_c("i", { staticClass: "fa fa-trash" })])
   },
 ]
 render._withStripped = true

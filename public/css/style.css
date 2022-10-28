@@ -17,6 +17,26 @@ label{
 .manufacturers-container .contents{
     cursor:pointer;
 }
+.text-right{
+    text-align: right !important;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius:10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
 
 @media only screen and (max-width: 768px) {
     table{

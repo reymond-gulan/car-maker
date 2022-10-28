@@ -26,3 +26,9 @@ Route::group(['prefix' => 'manufacturers'], function () {
     Route::delete('{manufacturer}', [Api\ManufacturersController::class, 'destroy']);
 });
 
+Route::group(['prefix' => 'cars'], function () {
+    Route::get('/', [Api\CarsController::class, 'index']);
+    Route::post('/save', [Api\CarsController::class, 'save']);
+    Route::delete('{cars}', [Api\CarsController::class, 'destroy']);
+});
+

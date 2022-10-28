@@ -8,18 +8,19 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
 
 use App\Models\Manufacturers;
+use App\Models\Cars;
 
-class ManufacturersController extends Controller
+class CarsController extends Controller
 {
     public function index()
     {
-        $data = Manufacturers::orderBy('manufacturer_id','DESC')->get();
+        $data = Cars::with('manufacturers')->orderBy('car_id','DESC')->get();
 
         return $data;
     }
     
     /**
-     * Save manufacturer's data to the database
+     * Save data to the database
      *
      * @param Request $request
      * @return array
@@ -30,9 +31,8 @@ class ManufacturersController extends Controller
         $message = '';
 
         $rules = array(
-            'manufacturer' => ['required'],
-            'type' => ['required'],
-            'color' => ['required'],
+            'manufacturer_id' => ['required'],
+            'car_name' => ['required','string', 'max:255'],
         );
 
         $error  = Validator::make($request->all(),$rules);
@@ -43,14 +43,16 @@ class ManufacturersController extends Controller
         
         
         $data = [
-            'manufacturer' => $request->get('manufacturer'),
-            'type' => $request->get('type'),
-            'color' => $request->get('color')
+            'manufacturer_id' => $request->get('manufacturer_id'),
+            'car_name' => $request->get('car_name')
         ];
 
         try {
 
-            Manufacturers::create($data);
+            $manufacturers = Manufacturers::findOrFail($data['manufacturer_id']);
+            
+            $manufacturers->cars()->create($data);
+
             $message = 'New record has been saved';
 
             return response()->json(['success' => $message]);
@@ -63,16 +65,16 @@ class ManufacturersController extends Controller
     /**
      * Delete given data from database
      *
-     * @param Manufacturers $manufacturer
+     * @param Cars $cars
      *
      * @return array
      *
      */
-    public function destroy(Manufacturers $manufacturer)
+    public function destroy(Cars $cars)
     {
         try {
             
-            $manufacturer->delete();
+            $cars->delete();
             return response()->json(['success' => 'Database record has been deleted.']);
 
         } catch(QueryException $e) {
