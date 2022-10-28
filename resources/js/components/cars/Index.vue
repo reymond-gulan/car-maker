@@ -90,7 +90,7 @@
         mounted () {
             this.getManufacturers();
             this.getCars();
-            
+            $('.btn-add').trigger('click');
             $(document).on('click','.form, .manufacturers-container .col-sm-12', function(){
                 var container = $('.manufacturers-container');
                 if(container.is(':hidden')){
