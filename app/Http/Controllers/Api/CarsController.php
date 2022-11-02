@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Manufacturers;
 use App\Models\Cars;
 use App\Http\Requests\CarRequests;
+use App\Classes\ManufacturersHelper;
 
 class CarsController extends Controller
 {
@@ -36,7 +37,7 @@ class CarsController extends Controller
 
         try {
 
-            $manufacturers = Manufacturers::findOrFail($data['manufacturer_id']);
+            $manufacturers = ManufacturersHelper::manufacturer($data);
             
             $manufacturers->cars()->create($data);
 
@@ -52,6 +53,53 @@ class CarsController extends Controller
 
         }
     }
+
+    /**
+     * Show specified data
+     *
+     * @param int $id
+     *
+     * @return array
+     *
+     */
+    public function show($id)
+    {
+        return Cars::with('manufacturers')->find($id);
+    }
+
+    /**
+     * Update specified data
+     *
+     * @param CarRequests $request, int $id
+     *
+     * @return void
+     *
+     */
+    public function update(CarRequests $request, $id)
+    {
+        $data = $request->validated();
+        
+        DB::beginTransaction();
+
+        try {
+
+            ManufacturersHelper::manufacturer($data);
+            
+            Cars::find($id)->update($data);
+
+            DB::commit();
+
+            return response()->json(['success' => true]);
+
+        } catch(QueryException $e) {
+
+            DB::rollback();
+
+            return response()->json(['error' => $e->errorInfo[2]]);
+
+        }
+    }
+
 
     /**
      * Delete given data from database

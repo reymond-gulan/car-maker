@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Manufacturers;
 use App\Http\Requests\ManufacturerRequests;
+use App\Classes\ManufacturersHelper;
 
 class ManufacturersController extends Controller
 {
@@ -49,6 +50,56 @@ class ManufacturersController extends Controller
             return response()->json(['error' => $e->errorInfo[2]]);
         }
     }
+
+    /**
+     * Show specified data
+     *
+     * @param int $id
+     *
+     * @return array
+     *
+     */
+    public function show($id)
+    {
+        $data['manufacturer_id'] = $id;
+
+        return ManufacturersHelper::manufacturer($data);
+    }
+
+    /**
+     * Update specified data
+     *
+     * @param ManufacturerRequests $request, int $id
+     *
+     * @return void
+     *
+     */
+    public function update(ManufacturerRequests $request, $id)
+    {
+        $data = $request->validated();
+        
+        DB::beginTransaction();
+
+        try {
+            $data['manufacturer_id'] = $id;
+            
+            $manufacturer = ManufacturersHelper::manufacturer($data);
+            
+            $manufacturer->update($data);
+
+            DB::commit();
+
+            return response()->json(['success' => true]);
+
+        } catch(QueryException $e) {
+
+            DB::rollback();
+
+            return response()->json(['error' => $e->errorInfo[2]]);
+
+        }
+    }
+
 
     /**
      * Delete given data from database
