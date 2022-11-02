@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Manufacturers;
+use App\Http\Requests\ManufacturerRequests;
 
 class ManufacturersController extends Controller
 {
@@ -21,44 +23,29 @@ class ManufacturersController extends Controller
     /**
      * Save manufacturer's data to the database
      *
-     * @param Request $request
+     * @param ManufacturerRequests $request
      * @return array
      */
 
-    public function save(Request $request)
-    {
-        $message = '';
-
-        $rules = array(
-            'manufacturer' => ['required'],
-            'type' => ['required'],
-            'color' => [
-                    'required',
-                    'regex:/^#[a-zA-Z0-9]{6}$/i'
-                        ],
-        );
-
-        $error  = Validator::make($request->all(),$rules);
-            
-        if ($error->fails()) {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
+    public function save(ManufacturerRequests $request)
+    {   
         
-        
-        $data = [
-            'manufacturer' => $request->get('manufacturer'),
-            'type' => $request->get('type'),
-            'color' => $request->get('color')
-        ];
+        $data = $request->validated();
 
+        DB::beginTransaction();
+        
         try {
 
             Manufacturers::create($data);
-            $message = 'New record has been saved';
 
-            return response()->json(['success' => $message]);
+            DB::commit();
 
+            return response()->json(['success' => 'Saved!']);
+            
         } catch(QueryException $e) {
+
+            DB::rollback();
+
             return response()->json(['error' => $e->errorInfo[2]]);
         }
     }

@@ -155,26 +155,17 @@
                             this.clearFields();
                             this.getCars();
                             $('.btn-add').trigger('click');
-                        } else if(response.data['errors']) {
-                            var message = "";
-                            for(var i = 0; i < response.data['errors'].length; i++)
-                            {
-                                message += '<li>'+ response.data['errors'][i]+'</li>';
-                            }
-
-                            Swal.fire('ERROR',message,'error');
                         } else {
                             Swal.fire('ERROR',response.data['error'],'error');
                         }
                         
                     }).catch((error) => {
+                        var message = "";
+                        $.each( error.response.data.errors, function(key, value) {
+                            message += '<li>'+ value +'</li>';
+                        });
 
-                        Swal.fire(
-                            'Oops...',
-                            'Invalid / Unauthorized request. Please reload and try again',
-                            'error'
-                        );
-                        console.debug(`Error while creating new record - ${JSON.stringify(error)}`);
+                        Swal.fire('ERROR',message,'error');
                 })
             },
 

@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Manufacturers;
 use App\Models\Cars;
+use App\Http\Requests\CarRequests;
 
 class CarsController extends Controller
 {
@@ -22,30 +24,15 @@ class CarsController extends Controller
     /**
      * Save data to the database
      *
-     * @param Request $request
+     * @param CarRequests $request
      * @return array
      */
 
-    public function save(Request $request)
+    public function save(CarRequests $request)
     {
-        $message = '';
-
-        $rules = array(
-            'manufacturer_id' => ['required'],
-            'car_name' => ['required','string', 'max:255'],
-        );
-
-        $error  = Validator::make($request->all(),$rules);
-            
-        if ($error->fails()) {
-            return response()->json(['errors' => $error->errors()->all()]);
-        }
+        $data = $request->validated();
         
-        
-        $data = [
-            'manufacturer_id' => $request->get('manufacturer_id'),
-            'car_name' => $request->get('car_name')
-        ];
+        DB::beginTransaction();
 
         try {
 
@@ -53,12 +40,16 @@ class CarsController extends Controller
             
             $manufacturers->cars()->create($data);
 
-            $message = 'New record has been saved';
+            DB::commit();
 
-            return response()->json(['success' => $message]);
+            return response()->json(['success' => 'Saved!']);
 
         } catch(QueryException $e) {
+
+            DB::rollback();
+
             return response()->json(['error' => $e->errorInfo[2]]);
+
         }
     }
 

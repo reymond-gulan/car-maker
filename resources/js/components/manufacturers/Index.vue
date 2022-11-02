@@ -14,17 +14,17 @@
                         </h5>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="manufacturer" v-model="manufacturer" placeholder="Manufacturer" autocomplete="off">
+                        <input type="text" class="form-control" id="manufacturer" name="manufacturer" v-model="manufacturer" placeholder="Manufacturer" autocomplete="off">
                         <label for="floatingInput">Manufacturer</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="type" v-model="type" placeholder="Type" autocomplete="off">
+                        <input type="text" class="form-control" id="type" name="type" v-model="type" placeholder="Type" autocomplete="off">
                         <label for="floatingPassword">Type</label>
                     </div>
                     <div class="form-group row">
                         <label for="color" class="col-sm-2 col-form-label">Color</label>
                         <div class="col-sm-10">
-                        <input type="color" class="form-control" id="color" v-model="color">
+                        <input type="color" class="form-control" id="color" name="color" v-model="color">
                         </div>
                     </div>
                     <div class="form-group">
@@ -121,31 +121,21 @@
 
                 axios.post('/api/manufacturers/save', data)
                     .then((response) => {
-
                         if(response.data['success']) {
                             Swal.fire('SUCCESS',response.data['success'],'success');
                             this.clearFields();
                             this.getManufacturers();
-                        } else if(response.data['errors']) {
-                            var message = "";
-                            for(var i = 0; i < response.data['errors'].length; i++)
-                            {
-                                message += '<li>'+ response.data['errors'][i]+'</li>';
-                            }
-
-                            Swal.fire('ERROR',message,'error');
                         } else {
                             Swal.fire('ERROR',response.data['error'],'error');
                         }
                         
                     }).catch((error) => {
-                        console.log(error);
-                        Swal.fire(
-                            'Oops...',
-                            error,
-                            'error'
-                        );
-                        console.debug(`Error while creating new record - ${JSON.stringify(error)}`);
+                        var message = "";
+                        $.each( error.response.data.errors, function(key, value) {
+                            message += '<li>'+ value +'</li>';
+                        });
+
+                        Swal.fire('ERROR',message,'error');
                 })
             },
 
@@ -186,7 +176,7 @@
             clearFields() {
                 this.manufacturer = null;
                 this.type = null;
-                this.color=null;
+                this.color='#000000';
             }
         }
     }

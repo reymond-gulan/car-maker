@@ -5465,18 +5465,15 @@ __webpack_require__.r(__webpack_exports__);
           _this3.clearFields();
           _this3.getCars();
           $('.btn-add').trigger('click');
-        } else if (response.data['errors']) {
-          var message = "";
-          for (var i = 0; i < response.data['errors'].length; i++) {
-            message += '<li>' + response.data['errors'][i] + '</li>';
-          }
-          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', message, 'error');
         } else {
           sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', response.data['error'], 'error');
         }
       })["catch"](function (error) {
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('Oops...', 'Invalid / Unauthorized request. Please reload and try again', 'error');
-        console.debug("Error while creating new record - ".concat(JSON.stringify(error)));
+        var message = "";
+        $.each(error.response.data.errors, function (key, value) {
+          message += '<li>' + value + '</li>';
+        });
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', message, 'error');
       });
     },
     /**
@@ -5651,19 +5648,15 @@ __webpack_require__.r(__webpack_exports__);
           sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('SUCCESS', response.data['success'], 'success');
           _this2.clearFields();
           _this2.getManufacturers();
-        } else if (response.data['errors']) {
-          var message = "";
-          for (var i = 0; i < response.data['errors'].length; i++) {
-            message += '<li>' + response.data['errors'][i] + '</li>';
-          }
-          sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', message, 'error');
         } else {
           sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', response.data['error'], 'error');
         }
       })["catch"](function (error) {
-        console.log(error);
-        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('Oops...', error, 'error');
-        console.debug("Error while creating new record - ".concat(JSON.stringify(error)));
+        var message = "";
+        $.each(error.response.data.errors, function (key, value) {
+          message += '<li>' + value + '</li>';
+        });
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire('ERROR', message, 'error');
       });
     },
     /**
@@ -5699,7 +5692,7 @@ __webpack_require__.r(__webpack_exports__);
     clearFields: function clearFields() {
       this.manufacturer = null;
       this.type = null;
-      this.color = null;
+      this.color = '#000000';
     }
   }
 });
@@ -32874,6 +32867,7 @@ var render = function () {
                   attrs: {
                     type: "text",
                     id: "manufacturer",
+                    name: "manufacturer",
                     placeholder: "Manufacturer",
                     autocomplete: "off",
                   },
@@ -32907,6 +32901,7 @@ var render = function () {
                   attrs: {
                     type: "text",
                     id: "type",
+                    name: "type",
                     placeholder: "Type",
                     autocomplete: "off",
                   },
@@ -32947,7 +32942,7 @@ var render = function () {
                       },
                     ],
                     staticClass: "form-control",
-                    attrs: { type: "color", id: "color" },
+                    attrs: { type: "color", id: "color", name: "color" },
                     domProps: { value: _vm.color },
                     on: {
                       input: function ($event) {
